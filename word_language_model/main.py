@@ -8,6 +8,8 @@ import torch.nn as nn
 
 import data
 import model
+import pickle
+from data import Dictionary
 
 parser = argparse.ArgumentParser(description='PyTorch Wikitext-2 RNN/LSTM/GRU/Transformer Language Model')
 parser.add_argument('--data', type=str, default='./data/wikitext-2',
@@ -57,7 +59,15 @@ if torch.cuda.is_available():
 device = torch.device("cuda" if args.cuda else "cpu")
 
 # 和word_language_model不同, sst2的corpus既要包含输入也要包含输出(label)
+
+# 保存mapping文件
+def save_id_mapping(dic: Dictionary):
+    with open('id_mapping.pkl', 'wb') as f:
+        pickle.dump(dic, f)
+
 corpus = data.Corpus(args.data)
+save_id_mapping(corpus.dictionary)
+
 
 # Starting from sequential data, batchify arranges the dataset into columns.
 # For instance, with the alphabet as the sequence and batch size 4, we'd get
